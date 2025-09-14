@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dinheiro Fácil</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0d0d0d;
+      color: #fff;
+      text-align: center;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    header {
+      background: linear-gradient(90deg, #00ffcc, #ff00ff);
+      padding: 20px;
+      font-size: 2em;
+      font-weight: bold;
+      text-transform: uppercase;
+      animation: glow 2s infinite alternate;
+      margin-top: 60px; 
+    }
+
+    @keyframes glow {
+      from { text-shadow: 0 0 10px #00ffcc; }
+      to { text-shadow: 0 0 20px #ff00ff; }
+    }
+
+    .contador-topo {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background: linear-gradient(90deg, #ff0000, #ff6600);
+      color: #fff;
+      font-size: 1.2em;
+      font-weight: bold;
+      padding: 12px;
+      text-align: center;
+      z-index: 10000;
+      animation: pulse 1.5s infinite;
+    }
+
+    .contador-topo span {
+      color: #00ffcc;
+      text-shadow: 0 0 10px #00ffcc;
+    }
+
+    .container {
+      padding: 20px;
+      max-width: 900px;
+      margin: 20px auto;
+    }
+
+    .saldo-box {
+      margin: 20px auto;
+      padding: 15px;
+      background: linear-gradient(90deg, #00ffcc, #0066ff);
+      border-radius: 12px;
+      font-size: 1.5em;
+      font-weight: bold;
+      width: fit-content;
+      box-shadow: 0 0 15px #00ffcc;
+    }
+
+    .task {
+      position: relative;
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px solid #00ffcc;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 15px 0;
+      font-size: 1.2em;
+      transition: transform 0.3s;
+      cursor: pointer;
+    }
+
+    .task:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 15px #00ffcc;
+    }
+
+    .task.disabled {
+      background: rgba(255, 255, 255, 0.1);
+      border: 2px solid #555;
+      color: #777;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .alerta {
+      margin-top: 40px;
+      padding: 20px;
+      background: linear-gradient(90deg, #ff0000, #ff6600);
+      border-radius: 12px;
+      font-size: 1.2em;
+      font-weight: bold;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    .btn-vaga {
+      margin: 25px auto;
+      padding: 15px 25px;
+      font-size: 1.3em;
+      font-weight: bold;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(90deg, #00ffcc, #0066ff);
+      color: #fff;
+      cursor: pointer;
+      box-shadow: 0 0 15px #00ffcc;
+      transition: transform 0.3s;
+    }
+
+    .btn-vaga:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 25px #00ffcc;
+    }
+
+    .loader {
+      margin: 20px auto;
+      border: 8px solid rgba(255,255,255,0.1);
+      border-top: 8px solid #00ffcc;
+      border-radius: 50%;
+      width: 70px;
+      height: 70px;
+      animation: spin 1s linear infinite, glow 1.5s infinite alternate;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .vaga-aceita {
+      margin: 20px auto;
+      font-size: 1.5em;
+      font-weight: bold;
+      color: #00ffcc;
+      text-shadow: 0 0 10px #00ffcc;
+    }
+
+    .seta {
+      font-size: 2em;
+      margin-top: 10px;
+      animation: bounce 1.5s infinite;
+      color: #ff00ff;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .carteira {
+      margin: 30px auto;
+      padding: 20px;
+      background: linear-gradient(90deg, #00ff88, #00cc44);
+      border-radius: 15px;
+      font-size: 1.5em;
+      font-weight: bold;
+      color: #fff;
+      box-shadow: 0 0 20px #00ff88;
+      width: fit-content;
+    }
+
+    .pix-form {
+      margin: 20px auto;
+      padding: 20px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 12px;
+      max-width: 400px;
+    }
+
+    .pix-form input {
+      width: 80%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: none;
+      outline: none;
+      font-size: 1em;
+      text-align: center;
+    }
+
+    .pix-form button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      background: linear-gradient(90deg, #00ffcc, #0066ff);
+      color: #fff;
+      font-size: 1.1em;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 0 15px #00ffcc;
+    }
+
+    .notificacao {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      background: rgba(0, 255, 100, 0.15);
+      border: 2px solid #00ff66;
+      padding: 10px 15px;
+      border-radius: 10px;
+      font-size: 0.9em;
+      color: #00ff88;
+      box-shadow: 0 0 15px #00ff66;
+      animation: fadeInOut 6s forwards;
+    }
+
+    @keyframes fadeInOut {
+      0% { opacity: 0; transform: translateY(20px); }
+      10% { opacity: 1; transform: translateY(0); }
+      90% { opacity: 1; }
+      100% { opacity: 0; transform: translateY(20px); }
+    }
+
+    /* 🔥 Saldo flutuante */
+    .saldo-flutuante {
+      position: absolute;
+      color: #00ffcc;
+      font-weight: bold;
+      font-size: 1.5em;
+      text-shadow: 0 0 10px #00ffcc, 0 0 20px #00ffcc;
+      pointer-events: none;
+      transition: all 1s ease-out;
+    }
+
+    /* Overlay de pagamento */
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.95);
+      color: #fff;
+      z-index: 99999;
+      text-align: center;
+      padding-top: 150px;
+      font-size: 1.5em;
+    }
+
+    .overlay button {
+      margin: 20px 15px;
+      padding: 15px 25px;
+      font-size: 1.2em;
+      font-weight: bold;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+
+    .btn-continuar {
+      background: linear-gradient(90deg, #00ffcc, #0066ff);
+      color: #000;
+    }
+
+    .btn-cancelar {
+      background: linear-gradient(90deg, #ff0000, #ff6600);
+      color: #fff;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="contador-topo">
+    ⏳ Você tem <span id="contador">15:00</span> para completar as tarefas de hoje!
+  </div>
+
+  <header>💸 Dinheiro Fácil 💸</header>
+
+  <button class="btn-vaga" id="btnVaga">🚀 SOLICITAR VAGA PARA TAREFAS HOJE</button>
+  <div id="vagaArea"></div>
+
+  <div class="container" id="tarefasContainer" style="display:none;">
+    <div class="saldo-box">💰 Saldo: R$ <span id="saldo">0,00</span></div>
+
+    <h2>Ganhe dinheiro completando tarefas simples!</h2>
+    <div class="task">👍 Curtir uma página – R$5,00</div>
+    <div class="task">⭐ Avaliar produtos – R$8,00</div>
+    <div class="task">💬 Comentar em postagens fixas – R$15,00</div>
+    <div class="task">🎯 Mais tarefas disponíveis diariamente – R$20,00</div>
+
+    <div class="alerta">⚠️ Aviso: O limite diário para saque é de R$250,00</div>
+
+    <div id="areaSaque" style="display:none;">
+      <div class="carteira">💳 Saldo total de hoje: R$250,00</div>
+      <form class="pix-form" id="pixForm">
+        <label>Digite sua chave Pix:</label><br>
+        <input type="text" placeholder="exemplo@pix.com" required><br>
+        <button type="button" id="btnSaque">Solicitar saque</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Overlay de pagamento -->
+  <div class="overlay" id="overlayPagamento">
+    <p>PARA LIBERAÇÃO DO SALDO DAS TAREFAS EFETUAR O PAGAMENTO DE R$20,00</p>
+    <button class="btn-continuar" id="btnContinuar">Continuar</button>
+    <button class="btn-cancelar" id="btnCancelar">Cancelar</button>
+  </div>
+
+  <script>
+    let saldo = 0;
+    const saldoSpan = document.getElementById('saldo');
+    const tasks = document.querySelectorAll('.task');
+    const contadorEl = document.getElementById('contador');
+    let bloqueado = false;
+    const valores = [5, 8, 15, 20];
+
+    tasks.forEach((task, i) => {
+      task.addEventListener('click', (e) => {
+        if(bloqueado) return;
+        const valor = valores[i];
+        saldo += valor;
+        if(saldo >= 250) {
+          saldo = 250;
+          bloquearTarefas();
+          document.getElementById("areaSaque").style.display = "block";
+        }
+        saldoSpan.textContent = saldo.toFixed(2).replace('.', ',');
+
+        // saldo flutuante
+        const flutuante = document.createElement('div');
+        flutuante.className = 'saldo-flutuante';
+        flutuante.innerText = `+R$${valor.toFixed(2).replace('.', ',')}`;
+        document.body.appendChild(flutuante);
+
+        const rect = task.getBoundingClientRect();
+        flutuante.style.left = `${rect.left + rect.width / 2 - 30}px`;
+        flutuante.style.top = `${rect.top - 30}px`;
+
+        setTimeout(() => {
+          flutuante.style.top = `${rect.top - 80}px`;
+          flutuante.style.opacity = '0';
+        }, 50);
+
+        setTimeout(() => flutuante.remove(), 1100);
+      });
+    });
+
+    let tempoRestante = 15 * 60;
+    function atualizarContador() {
+      let minutos = Math.floor(tempoRestante / 60);
+      let segundos = tempoRestante % 60;
+      contadorEl.textContent =
+        `${minutos.toString().padStart(2,'0')}:${segundos.toString().padStart(2,'0')}`;
+
+      if (tempoRestante <= 0) {
+        clearInterval(contagem);
+        contadorEl.textContent = "00:00";
+        bloquearTarefas();
+      }
+      tempoRestante--;
+    }
+
+    function bloquearTarefas() {
+      tasks.forEach(task => task.classList.add("disabled"));
+      bloqueado = true;
+    }
+
+    const contagem = setInterval(atualizarContador, 1000);
+    atualizarContador();
+
+    document.getElementById("btnVaga").addEventListener("click", () => {
+      const vagaArea = document.getElementById("vagaArea");
+      vagaArea.innerHTML = `<div class="loader"></div><p>⏳ Procurando vagas disponíveis...</p>`;
+      document.getElementById("btnVaga").style.display = "none";
+
+      setTimeout(() => {
+        vagaArea.innerHTML = `
+          <div class="vaga-aceita">✅ Parabéns, sua vaga foi aceita!</div>
+          <div class="seta">⬇️</div>
+          <p><strong>Conclua suas tarefas de hoje!</strong></p>
+        `;
+        document.getElementById("tarefasContainer").style.display = "block";
+      }, 7000);
+    });
+
+    const nomes = ["Maria S.", "João P.", "Carla M.", "Rafael L.", "Ana B.", "Pedro C."];
+    function mostrarNotificacao() {
+      const nome = nomes[Math.floor(Math.random() * nomes.length)];
+      const notif = document.createElement("div");
+      notif.className = "notificacao";
+      notif.innerText = `💸 ${nome} acabou de sacar R$230,00 via Pix`;
+      document.body.appendChild(notif);
+      setTimeout(() => notif.remove(), 6000);
+    }
+
+    let notificacoes = 0;
+    const intervaloNotif = setInterval(() => {
+      if(notificacoes >= 8) clearInterval(intervaloNotif);
+      mostrarNotificacao();
+      notificacoes++;
+    }, 15000);
+
+    // --- NOVO: Overlay de pagamento ---
+    const overlay = document.getElementById('overlayPagamento');
+    const btnSaque = document.getElementById('btnSaque');
+    const btnContinuar = document.getElementById('btnContinuar');
+    const btnCancelar = document.getElementById('btnCancelar');
+
+    btnSaque.addEventListener('click', () => {
+      const pixInput = document.querySelector('#pixForm input');
+      if(pixInput.value.trim() === '') {
+        alert('Digite sua chave Pix antes de continuar!');
+        return;
+      }
+      overlay.style.display = 'block';
+    });
+
+    btnCancelar.addEventListener('click', () => {
+      overlay.style.display = 'none';
+    });
+
+    btnContinuar.addEventListener('click', () => {
+      window.open('https://nubank.com.br/cobrar/1jlr1i/68c707b5-ae6c-4aa7-8854-84eb6c1c0fbc', '_blank');
+    });
+  </script>
+</body>
+</html>
